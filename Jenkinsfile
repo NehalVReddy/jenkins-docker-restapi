@@ -47,17 +47,37 @@ pipeline {
                 }
             }
         }
-        stage('Extract Last 5 Builds') {
+        stage('Fetch Last 5 Jenkins Builds') {
             steps {
-                powershell '''
-                $json = Get-Content builds.json -Raw | ConvertFrom-Json
+                withCredentials([string(credentialsId: 'jenkins-api-token', variable: 'API_TOKEN')]) {
+                    powershell '''
+                    $baseFile = "last5_builds.json"
         
-                $last5 = $json.builds | Select-Object -First 5
+                    # Find existing files
+                    $existing = Get-ChildItem "$baseFile*" -ErrorAction SilentlyContinue
         
-                $last5 | ConvertTo-Json -Depth 6 | Out-File last5_builds.json
-                '''
+                    if ($existing) {
+                        $numbers = $existing.Name |
+                            ForEach-Object {
+                                if ($_ -match 'json(\\d+)$') { [int]$matches[1] }
+                            }
+                        $next = ($numbers | Measure-Object -Maximum).Maximum + 1
+                    } else {
+                        $next = 1
+                    }
+        
+                    $outputFile = "$baseFile$next"
+        
+                    Write-Host "Saving build info to $outputFile"
+        
+                    curl -s -u admin:$env:API_TOKEN `
+                      "http://localhost:8080/job/Docker_App_Pipeline/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
+                      > $outputFile
+                    '''
+                }
             }
         }
+
 
 
 
@@ -70,7 +90,7 @@ pipeline {
 
         stage('Archive Results') {
             steps {
-                archiveArtifacts artifacts: 'builds.json'
+                archiveArtifacts artifacts: 'build.json,last5_builds.json*', fingerprint: true
             }
         }
     }
