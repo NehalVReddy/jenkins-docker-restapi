@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "jenkins-demo-app"
         JENKINS_URL = "http://localhost:8080"
-        JOB_NAME = "Docker_App_Pipeline"
+        JOB_NAME = "pipe"
         USERNAME = "admin"
         API_TOKEN = credentials('jenkins-api-token')
     }
@@ -55,6 +55,14 @@ pipeline {
                 '''
             }
         }
+
+
+        stage('Debug builds.json') {
+            steps {
+                bat 'type builds.json'
+            }
+        }
+
 
         stage('Archive Results') {
             steps {
