@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout from GitHub') {
             steps {
                 git(
-                    url: 'https://github.com/NehalVReddy/jenkins-docker-self-monitor.git',
+                    url: 'https://github.com/NehalVReddy/jenkins-docker-restapi.git',
                     credentialsId: 'github-pat',
                     branch: 'main'
                     )
