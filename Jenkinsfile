@@ -50,11 +50,15 @@ pipeline {
         stage('Extract Last 5 Builds') {
             steps {
                 powershell '''
-                $json = Get-Content builds.json | ConvertFrom-Json
-                $json.builds | Select-Object -First 5 | ConvertTo-Json -Depth 5 | Out-File last5_builds.json
+                $json = Get-Content builds.json -Raw | ConvertFrom-Json
+        
+                $last5 = $json.builds | Select-Object -First 5
+        
+                $last5 | ConvertTo-Json -Depth 6 | Out-File last5_builds.json
                 '''
             }
         }
+
 
 
         stage('Debug builds.json') {
