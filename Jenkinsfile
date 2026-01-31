@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "jenkins-demo-app"
         JENKINS_URL = "http://localhost:8080"
-        JOB_NAME = "pipe"
+        JOB_NAME = "Data"
         USERNAME = "admin"
         API_TOKEN = credentials('jenkins-api-token')
     }
@@ -62,19 +62,28 @@ pipeline {
                         $outputFile = "last5_builds.json$count"
                         Write-Host "Saving build info to $outputFile"
         
-                        $auth = [Convert]::ToBase64String(
-                            [Text.Encoding]::ASCII.GetBytes("admin:$env:API_TOKEN")
-                        )
+                        $pair = "admin:$env:API_TOKEN"
+                        $auth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
+                        $headers = @{ Authorization = "Basic $auth" }
         
-                        Invoke-WebRequest `
-                            -Uri "http://localhost:8080/job/pipe/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
-                            -Headers @{ Authorization = "Basic $auth" } `
-                            -OutFile $outputFile
+                        # 1️⃣ Get Jenkins Crumb
+                        $crumbResponse = Invoke-RestMethod `
+                            -Uri "http://localhost:8080/crumbIssuer/api/json" `
+                            -Headers $headers
+        
+                        $headers[$crumbResponse.crumbRequestField] = $crumbResponse.crumb
+        
+                        # 2️⃣ Fetch last 5 builds
+                        Invoke-RestMethod `
+                            -Uri "http://localhost:8080/job/Data/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
+                            -Headers $headers `
+                        | ConvertTo-Json -Depth 5 `
+                        | Out-File $outputFile -Encoding utf8
                     '''
                 }
             }
         }
-
+        
 
 
 
