@@ -23,7 +23,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t $IMAGE_NAME .'
+                bat 'docker build -t %IMAGE_NAME% .'
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 bat '''
                 docker rm -f demo || true
-                docker run -d --name demo -p 5000:5000 $IMAGE_NAME
+                docker run -d --name demo -p 5000:5000 %IMAGE_NAME%
                 '''
             }
         }
