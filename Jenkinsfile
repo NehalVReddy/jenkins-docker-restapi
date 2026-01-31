@@ -13,9 +13,13 @@ pipeline {
 
         stage('Checkout from GitHub') {
             steps {
-                git 'https://github.com/NehalVReddy/jenkins-docker-self-monitor.git'
+                git(
+                    url: 'https://github.com/NehalVReddy/jenkins-docker-self-monitor.git',
+                    credentialsId: 'github-pat',
+                    branch: 'main'
+                    )
+                 }
             }
-        }
 
         stage('Build Docker Image') {
             steps {
