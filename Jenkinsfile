@@ -38,13 +38,16 @@ pipeline {
 
         stage('Fetch Last 5 Jenkins Builds') {
             steps {
-                bat """
-                curl -s -u $USERNAME:$API_TOKEN \
-                "$JENKINS_URL/job/$JOB_NAME/api/json?tree=builds[number,result,timestamp,duration,url]^{0,5}" \
-                > builds.json
-                """
+                withCredentials([string(credentialsId: 'jenkins-api-token', variable: 'API_TOKEN')]) {
+                    bat '''
+                    curl -s -u %USERNAME%:%API_TOKEN% ^
+                    "%JENKINS_URL%/job/%JOB_NAME%/api/json" ^
+                    > builds.json
+                    '''
+                }
             }
         }
+
 
         stage('Archive Results') {
             steps {
