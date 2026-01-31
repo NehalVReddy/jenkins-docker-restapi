@@ -51,28 +51,25 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'jenkins-api-token', variable: 'API_TOKEN')]) {
                     powershell '''
-                    $baseFile = "last5_builds.json"
+                        $counterFile = "counter.txt"
+                        if (!(Test-Path $counterFile)) {
+                            Set-Content $counterFile "0"
+                        }
         
-                    # Find existing files
-                    $existing = Get-ChildItem "$baseFile*" -ErrorAction SilentlyContinue
+                        $count = [int](Get-Content $counterFile) + 1
+                        Set-Content $counterFile $count
         
-                    if ($existing) {
-                        $numbers = $existing.Name |
-                            ForEach-Object {
-                                if ($_ -match 'json(\\d+)$') { [int]$matches[1] }
-                            }
-                        $next = ($numbers | Measure-Object -Maximum).Maximum + 1
-                    } else {
-                        $next = 1
-                    }
+                        $outputFile = "last5_builds.json$count"
+                        Write-Host "Saving build info to $outputFile"
         
-                    $outputFile = "$baseFile$next"
+                        $auth = [Convert]::ToBase64String(
+                            [Text.Encoding]::ASCII.GetBytes("admin:$env:API_TOKEN")
+                        )
         
-                    Write-Host "Saving build info to $outputFile"
-        
-                    curl -s -u admin:$env:API_TOKEN `
-                      "http://localhost:8080/job/Docker_App_Pipeline/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
-                      > $outputFile
+                        Invoke-WebRequest `
+                            -Uri "http://localhost:8080/job/pipe/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
+                            -Headers @{ Authorization = "Basic $auth" } `
+                            -OutFile $outputFile
                     '''
                 }
             }
