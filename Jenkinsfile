@@ -87,11 +87,16 @@ pipeline {
 
 
 
-        stage('Debug builds.json') {
+        stage('Debug Last 5 Builds File') {
             steps {
-                bat 'type builds.json'
+                powershell '''
+                    $latest = Get-ChildItem last5_builds.json* | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+                    Write-Host "Latest file: $($latest.Name)"
+                    Get-Content $latest.Name
+                '''
             }
         }
+
 
 
         stage('Archive Results') {
