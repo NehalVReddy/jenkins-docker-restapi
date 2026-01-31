@@ -23,13 +23,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                bat 'docker build -t $IMAGE_NAME .'
             }
         }
 
         stage('Run Container') {
             steps {
-                sh '''
+                bat '''
                 docker rm -f demo || true
                 docker run -d --name demo -p 5000:5000 $IMAGE_NAME
                 '''
@@ -38,7 +38,7 @@ pipeline {
 
         stage('Fetch Last 5 Jenkins Builds') {
             steps {
-                sh """
+                bat """
                 curl -s -u $USERNAME:$API_TOKEN \
                 "$JENKINS_URL/job/$JOB_NAME/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" \
                 > builds.json
