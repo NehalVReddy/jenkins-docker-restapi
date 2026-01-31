@@ -40,7 +40,7 @@ pipeline {
             steps {
                 bat """
                 curl -s -u $USERNAME:$API_TOKEN \
-                "$JENKINS_URL/job/$JOB_NAME/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" \
+                "$JENKINS_URL/job/$JOB_NAME/api/json?tree=builds[number,result,timestamp,duration,url]^{0,5}" \
                 > builds.json
                 """
             }
