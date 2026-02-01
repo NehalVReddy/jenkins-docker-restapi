@@ -1,9 +1,9 @@
-pipeline {
+    pipeline {
     agent any
 
     environment {
         IMAGE_NAME = "jenkins-demo-app"
-        JENKINS_URL = "http://localhost:8080"
+        JENKINS_URL = "http://host.docker.internal:8080"
         JOB_NAME = "fetch_last5_builds_from_jenkins_server"
         USERNAME = "admin"
         API_TOKEN = credentials('jenkins-api-token')
