@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "jenkins-demo-app"
         JENKINS_URL = "http://localhost:8080"
-        JOB_NAME = "Docker_App_Pipeline"
+        JOB_NAME = "fetch_last5_builds_from_jenkins_server"
         USERNAME = "admin"
         API_TOKEN = credentials('jenkins-api-token')
     }
