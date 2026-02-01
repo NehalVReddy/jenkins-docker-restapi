@@ -4,7 +4,7 @@
     environment {
         IMAGE_NAME = "jenkins-demo-app"
         JENKINS_URL = "http://host.docker.internal:8080"
-        JOB_NAME = "fetch_last5_builds_from_jenkins_server"
+        JOB_NAME = "Docker_App_Pipeline"
         USERNAME = "admin"
         API_TOKEN = credentials('jenkins-api-token')
     }
@@ -49,7 +49,7 @@
         // }
         stage('Fetch Last 5 Jenkins Builds') {
             steps {
-                withCredentials([string(credentialsId: 'jenkins-api', variable: 'API_TOKEN')]) {
+                withCredentials([string(credentialsId: 'jenkins-api-token', variable: 'API_TOKEN')]) {
                     powershell '''
                         $counterFile = "counter.txt"
                         if (!(Test-Path $counterFile)) {
@@ -75,7 +75,7 @@
         
                         # 2️⃣ Fetch last 5 builds
                         Invoke-RestMethod `
-                            -Uri "http://localhost:8080/job/fetch_last5_builds_from_jenkins_server/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
+                            -Uri "http://localhost:8080/job/Docker_App_Pipeline/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
                             -Headers $headers `
                         | ConvertTo-Json -Depth 5 `
                         | Out-File $outputFile -Encoding utf8
