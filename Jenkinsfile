@@ -97,11 +97,11 @@ pipeline {
             }
         }
 
-        stage('Build Analytics') {
-            steps {
-                bat '"C:/Users/nehal.v/AppData/Local/Programs/Python/Python38/python.exe" pythonfile.py'
-            }
-        }
+        // stage('Build Analytics') {
+        //     steps {
+        //         bat '"C:/Users/nehal.v/AppData/Local/Programs/Python/Python38/python.exe" pythonfile.py'
+        //     }
+        // }
 
 
 
