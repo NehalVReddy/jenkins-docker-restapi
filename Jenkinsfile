@@ -99,7 +99,7 @@ pipeline {
 
         stage('Build Analytics') {
             steps {
-                bat 'python build_analytics.py'
+                bat 'pythonfile.py'
             }
         }
 
