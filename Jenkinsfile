@@ -49,7 +49,7 @@
         // }
         stage('Fetch Last 5 Jenkins Builds') {
             steps {
-                withCredentials([string(credentialsId: 'jenkins-api-token', variable: 'API_TOKEN')]) {
+                withCredentials([string(credentialsId: 'jenkins-build-intelligence', variable: 'API_TOKEN')]) {
                     powershell '''
                         $counterFile = "counter.txt"
                         if (!(Test-Path $counterFile)) {
