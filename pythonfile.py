@@ -1,26 +1,33 @@
 import json
-import glob
+import os
 
-files = glob.glob("last5_builds.json*")
+file = "last5_builds.json3"
 
-total = success = failure = 0
-durations = []
+if not os.path.exists(file):
+    raise Exception("JSON file not found")
 
-for file in files:
-    with open(file) as f:
-        data = json.load(f)
-        for b in data["builds"]:
-            total += 1
-            durations.append(b["duration"])
-            if b["result"] == "SUCCESS":
-                success += 1
-            else:
-                failure += 1
+if os.path.getsize(file) == 0:
+    raise Exception("JSON file is empty – Jenkins API fetch failed")
 
-success_rate = (success / total) * 100 if total > 0 else 0
+with open(file, "r") as f:
+    data = json.load(f)
 
-print("Total builds:", total)
-print("Success:", success)
-print("Failures:", failure)
-print("Success rate:", round(success_rate, 2), "%")
-print("Average duration:", sum(durations) / len(durations))
+builds = data.get("builds", [])
+
+total = len(builds)
+success = sum(1 for b in builds if b["result"] == "SUCCESS")
+avg_duration = sum(b["duration"] for b in builds) / total if total else 0
+
+summary = {
+    "total_builds": total,
+    "success_count": success,
+    "failure_count": total - success,
+    "success_rate": round((success / total) * 100, 2),
+    "average_duration_ms": round(avg_duration, 2)
+}
+
+with open("build_analytics_summary.json", "w") as f:
+    json.dump(summary, f, indent=4)
+
+print("✔ Build analytics generated successfully")
+print(summary)
