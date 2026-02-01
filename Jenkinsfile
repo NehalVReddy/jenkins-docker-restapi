@@ -75,7 +75,7 @@ pipeline {
         
                         # 2️⃣ Fetch last 5 builds
                         Invoke-RestMethod `
-                            -Uri "http://localhost:8080/job/Docker_App_Pipeline/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
+                            -Uri "http://localhost:8080/job/fetch_last5_builds_from_jenkins_server/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
                             -Headers $headers `
                         | ConvertTo-Json -Depth 5 `
                         | Out-File $outputFile -Encoding utf8
