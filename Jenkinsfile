@@ -97,6 +97,12 @@ pipeline {
             }
         }
 
+        stage('Build Analytics') {
+            steps {
+                bat 'python build_analytics.py'
+            }
+        }
+
 
 
         stage('Archive Results') {
