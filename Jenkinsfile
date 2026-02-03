@@ -4,7 +4,7 @@
     environment {
         IMAGE_NAME = "jenkins-demo-app"
         JENKINS_URL = "http://host.docker.internal:8080"
-        JOB_NAME = "Docker_App_Pipeline"
+        JOB_NAME = "data_check"
         USERNAME = "admin"
         API_TOKEN = credentials('jenkins-api-token')
     }
@@ -75,7 +75,7 @@
         
                         # 2️⃣ Fetch last 5 builds
                         Invoke-RestMethod `
-                            -Uri "http://localhost:8080/job/Docker_App_Pipeline/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
+                            -Uri "http://localhost:8080/job/data_check/api/json?tree=builds[number,result,timestamp,duration,url]{0,5}" `
                             -Headers $headers `
                         | ConvertTo-Json -Depth 5 `
                         | Out-File $outputFile -Encoding utf8
